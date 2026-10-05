@@ -1,0 +1,15 @@
+node_modules
+dist
+coverage
+test
+postman
+.git
+.github
+.agents
+.aws
+.codex
+.env
+.env.*
+!.env.example
+npm-debug.log*
+*.tsbuildinfo
