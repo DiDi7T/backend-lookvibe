@@ -195,12 +195,29 @@ describe('AppointmentsService', () => {
     expect(result).toMatchObject({ precioBase: 50000, descuentoBienvenida: 0, beneficioBienvenidaAplicado: false, precioTotal: 50000 });
   });
 
-  it.each([
-    [{ usuarioId: 'user-1', servicioId: 'service-1', fechaHora: '2026-10-10T10:00:00.000Z' }],
-    [{ usuarioId: 'user-1', negocioId: 'business-1', estilistaId: 'stylist-1', servicioId: 'service-1', fechaHora: '2026-10-10T10:00:00.000Z' }],
-  ])('rejects an appointment without exactly one booking target', async (dto) => {
+  it('rejects an appointment without a business or stylist booking target', async () => {
+    const dto = { usuarioId: 'user-1', servicioId: 'service-1', fechaHora: '2026-10-10T10:00:00.000Z' };
     await expect(service.create(dto as any)).rejects.toThrow(BadRequestException);
     expect(userRepository.findOne).not.toHaveBeenCalled();
+  });
+
+  it('creates an appointment for a selected stylist within a business', async () => {
+    mockBusinessContext();
+    stylistRepository.findOne.mockResolvedValue({ id: 'stylist-1', negocio: { id: 'business-1' } });
+
+    const result = await service.create({
+      usuarioId: 'user-1',
+      negocioId: 'business-1',
+      estilistaId: 'stylist-1',
+      servicioId: 'service-1',
+      fechaHora: '2026-10-10T10:00:00.000Z',
+    });
+
+    expect(result).toMatchObject({
+      negocio: { id: 'business-1' },
+      estilista: { id: 'stylist-1' },
+      servicio: { id: 'service-1' },
+    });
   });
 
   it('rejects missing user, service, business, and stylist', async () => {

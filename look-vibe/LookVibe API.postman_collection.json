@@ -1,0 +1,1572 @@
+{
+  "info": {
+    "_postman_id": "d43327c2-ece0-43ba-b578-fab4c670ba0a",
+    "name": "LookVibe API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54682543",
+    "_collection_link": "https://go.postman.co/collection/54682543-d43327c2-ece0-43ba-b578-fab4c670ba0a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Cliente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"andrea.cliente2026@example.com\",\n  \"password\": \"Andrea123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('tokenCliente', body.token);",
+                  "} else {",
+                  "  console.warn('La respuesta no contiene el campo token');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Negocio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"camilo.negocio2026@example.com\",\n  \"password\": \"Camilo123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('tokenNegocio', body.token);",
+                  "} else {",
+                  "  console.warn('La respuesta no contiene el campo token');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register Estilista Independiente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Estilista Independiente\",\n  \"email\": \"estilista.independiente2026@example.com\",\n  \"password\": \"Estilista123!\",\n  \"roles\": [\n    \"estilista\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Estilista Independiente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"estilista.independiente2026@example.com\",\n  \"password\": \"Estilista123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('tokenEstilista', body.token);",
+                  "} else {",
+                  "  console.warn('La respuesta no contiene el campo token');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Laura Martinez\",\r\n  \"email\": \"laura.martinez2026@example.com\",\r\n  \"password\": \"Laura123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"camilo.negocio2026@example.com\",\r\n  \"password\": \"Camilo123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('tokenNegocio', body.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_05ae}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"token\": \"{{json_web_token_1bt4}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"laura.martinez2026@example.com\",\r\n  \"password\": \"ContraseñaIncorrecta123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicated Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Laura Martinez\",\r\n  \"email\": \"laura.martinez2026@example.com\",\r\n  \"password\": \"Laura123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register A",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Andrea Cliente\",\r\n  \"email\": \"andrea.cliente2026@example.com\",\r\n  \"password\": \"Andrea123!\",\r\n  \"roles\": [\"cliente\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register B",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Barberia Granada\",\r\n  \"email\": \"barberia.granada2026@example.com\",\r\n  \"password\": \"Granada123!\",\r\n  \"roles\": [\"negocio\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prueba",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Register II",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Carlos Gomez\",\r\n  \"email\": \"carlos.gomez2026@example.com\",\r\n  \"password\": \"Carlos123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/faaffa1e-3038-4c09-9fee-97093b077b8a",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "faaffa1e-3038-4c09-9fee-97093b077b8a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/faaffa1e-3038-4c09-9fee-97093b077b8a/role",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "faaffa1e-3038-4c09-9fee-97093b077b8a",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/fd304842-df8d-461d-920c-3ec9029660bc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "fd304842-df8d-461d-920c-3ec9029660bc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find Out Update",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/faaffa1e-3038-4c09-9fee-97093b077b8a",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "faaffa1e-3038-4c09-9fee-97093b077b8a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/users/faaffa1e-3038-4c09-9fee-97093b077b8a",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "users",
+                "faaffa1e-3038-4c09-9fee-97093b077b8a"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Owner",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Camilo Rodriguez\",\r\n  \"email\": \"camilo.negocio2026@example.com\",\r\n  \"password\": \"Camilo123!\",\r\n  \"roles\": [\"negocio\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth Owner",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"camilo.negocio2026@example.com\",\r\n  \"password\": \"Camilo123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "  pm.collectionVariables.set('token', body.token);",
+                  "} else {",
+                  "  console.warn('La respuesta no contiene el campo token');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "Create Services 1",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Corte Fade\",\r\n  \"precio\": 25000,\r\n  \"duracionMin\": 45\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Services 2",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Barba\",\r\n  \"precio\": 15000,\r\n  \"duracionMin\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Services 2",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Corte Clasico\",\r\n  \"precio\": 20000,\r\n  \"duracionMin\": 40\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Specific Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios/5f6b629e-f4ae-4a98-96be-29edb964630d",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios",
+                "5f6b629e-f4ae-4a98-96be-29edb964630d"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prueba Servicios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Businesses",
+      "item": [
+        {
+          "name": "Create Buisness",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Barbería Granada\",\r\n  \"descripcion\": \"Barbería especializada en cortes modernos, barba y cuidado masculino\",\r\n  \"direccion\": \"Carrera 6 # 15-20, Granada, Cali\",\r\n  \"latitud\": 3.4516,\r\n  \"longitud\": -76.5320,\r\n  \"googlePlaceId\": \"lookvibe-barberia-granada-001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Mine Buisness",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/mios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "mios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Buisness",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0v41}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/c840ca3f-5da7-49aa-a4bf-b53012e7c416/estilistas/gestion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "estilistas",
+                "gestion"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Buisness",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Corte Fade\",\r\n  \"precio\": 25000,\r\n  \"duracionMin\": 45\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/mios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "mios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Buisness Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Buisness",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Barberia Granada LookVibe\",\r\n  \"descripcion\": \"Barberia social especializada en cortes modernos, barba y cuidado masculino\",\r\n  \"direccion\": \"Carrera 6 # 15-20, Granada, Cali\",\r\n  \"latitud\": 3.4516,\r\n  \"longitud\": -76.532,\r\n  \"googlePlaceId\": \"lookvibe-barberia-granada-001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consult Buisness Owner",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://p01--backend-lookvibe--dsz5y75j2hg5.code.run/negocios/mios",
+              "protocol": "https",
+              "host": [
+                "p01--backend-lookvibe--dsz5y75j2hg5",
+                "code",
+                "run"
+              ],
+              "path": [
+                "negocios",
+                "mios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consult Buisness As Owner",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0duc}}\n\n",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/mios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "mios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buisness Disponibility",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/disponibilidad?fecha=2026-10-10&duracionMin=45&pasoMin=30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "disponibilidad"
+              ],
+              "query": [
+                {
+                  "key": "fecha",
+                  "value": "2026-10-10"
+                },
+                {
+                  "key": "duracionMin",
+                  "value": "45"
+                },
+                {
+                  "key": "pasoMin",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Buisness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios?cerca_de=3.4516,-76.5320&radioKm=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios"
+              ],
+              "query": [
+                {
+                  "key": "cerca_de",
+                  "value": "3.4516,-76.5320"
+                },
+                {
+                  "key": "radioKm",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prueba Negocios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stylist",
+      "item": [
+        {
+          "name": "Create Stylist 1",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0yhm}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"especialidad\": \"Fade y barbería moderna\",\r\n  \"fotoUrl\": \"https://images.unsplash.com/photo-1621605815971-fbc98d665033\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/estilistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "estilistas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Stylist 2",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0v41}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"especialidad\": \"Barba y corte clásico\",\r\n  \"fotoUrl\": \"https://images.unsplash.com/photo-1503951914875-452162b0f3f1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/estilistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "estilistas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prueba Estilistas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/estilistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "estilistas"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Appointment",
+      "item": [
+        {
+          "name": "Buisness Schedule",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenNegocio}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"horarios\": [\r\n    {\r\n      \"diaSemana\": 1,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"19:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 2,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"19:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 3,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"19:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 4,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"19:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 5,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"19:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 6,\r\n      \"horaInicio\": \"09:00\",\r\n      \"horaFin\": \"15:00\"\r\n    }\r\n  ],\r\n  \"zonaHoraria\": \"America/Bogota\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/citas/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/horarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "horarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crate Stylist Schedule",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEstilista}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"horarios\": [\r\n    {\r\n      \"diaSemana\": 1,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"18:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 2,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"18:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 3,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"18:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 4,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"18:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 5,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"18:00\"\r\n    },\r\n    {\r\n      \"diaSemana\": 6,\r\n      \"horaInicio\": \"08:00\",\r\n      \"horaFin\": \"16:00\"\r\n    }\r\n  ],\r\n  \"zonaHoraria\": \"America/Bogota\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/citas/estilistas/17f798fd-2fba-4b33-9f86-23511d221803/horarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "estilistas",
+                "17f798fd-2fba-4b33-9f86-23511d221803",
+                "horarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Buisness Schedule Disponibility",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/citas/negocios/c840ca3f-5da7-49aa-a4bf-b53012e7c416/disponibilidad?fecha=2026-10-10&duracionMin=30&pasoMin=30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "negocios",
+                "c840ca3f-5da7-49aa-a4bf-b53012e7c416",
+                "disponibilidad"
+              ],
+              "query": [
+                {
+                  "key": "fecha",
+                  "value": "2026-10-10"
+                },
+                {
+                  "key": "duracionMin",
+                  "value": "30"
+                },
+                {
+                  "key": "pasoMin",
+                  "value": "30"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Appointment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": \"2f87b056-823e-4123-a08d-6460e4decbc7\",\n  \"estilistaId\": \"17f798fd-2fba-4b33-9f86-23511d221803\",\n  \"servicioId\": \"a19400e4-33ea-4128-84f9-8f1521c449c0\",\n  \"fechaHora\": \"2026-10-10T10:00:00-05:00\",\n  \"nota\": \"Corte y arreglo de barba\",\n  \"negocioId\": \"c840ca3f-5da7-49aa-a4bf-b53012e7c416\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/citas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consult Appointment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/citas/512b0155-170f-4439-b1b7-3ef8f6328f46",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "512b0155-170f-4439-b1b7-3ef8f6328f46"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consult All Apointments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/citas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Appointment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nota\": \"Cita actualizada\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/citas/512b0155-170f-4439-b1b7-3ef8f6328f46",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "512b0155-170f-4439-b1b7-3ef8f6328f46"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Appointment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenNegocio}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"completada\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/citas/512b0155-170f-4439-b1b7-3ef8f6328f46/completada",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "citas",
+                "512b0155-170f-4439-b1b7-3ef8f6328f46",
+                "completada"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_05ae",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_1bt4",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0v41",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0yhm",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0aei",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0duc",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0ezs",
+      "secret": true
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "secret": true
+    },
+    {
+      "key": "tokenCliente",
+      "value": "",
+      "type": "string",
+      "secret": true
+    },
+    {
+      "key": "tokenNegocio",
+      "value": "",
+      "type": "string",
+      "secret": true
+    },
+    {
+      "key": "tokenEstilista",
+      "value": "",
+      "type": "string",
+      "secret": true
+    }
+  ]
+}

@@ -114,10 +114,15 @@ export class AppointmentsService {
   async update(id: string, dto: UpdateAppointmentDto) {
     return this.dataSource.transaction(async (manager) => {
       const appointmentRepository = manager.getRepository(Appointment);
+      const lockedAppointment = await appointmentRepository.findOne({
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!lockedAppointment) throw new NotFoundException(`Cita con ID ${id} no encontrada`);
+
       const appointment = await appointmentRepository.findOne({
         where: { id },
         relations: { usuario: true, negocio: true, estilista: { negocio: true }, servicio: true },
-        lock: { mode: 'pessimistic_write' },
       });
       if (!appointment) throw new NotFoundException(`Cita con ID ${id} no encontrada`);
 
@@ -129,9 +134,9 @@ export class AppointmentsService {
       const rescheduling = Boolean(dto.negocioId || dto.estilistaId || dto.servicioId || dto.fechaHora);
       if (rescheduling) {
         const stylistId = dto.estilistaId ?? (dto.negocioId ? undefined : appointment.estilista?.id);
-        const businessId = dto.estilistaId
+        const businessId = dto.negocioId ?? (dto.estilistaId
           ? undefined
-          : dto.negocioId ?? (appointment.estilista ? undefined : this.appointmentBusinessId(appointment));
+          : appointment.estilista ? undefined : this.appointmentBusinessId(appointment));
         const { negocio, estilista, servicio } = await this.resolveContext({
           usuarioId: appointment.usuario.id,
           negocioId: businessId,
@@ -532,10 +537,6 @@ export class AppointmentsService {
       throw new BadRequestException('Debes seleccionar un negocio o un estilista para agendar la cita.');
     }
 
-    if (dto.negocioId && dto.estilistaId) {
-      throw new BadRequestException('Selecciona solo un negocio o un estilista, no ambos.');
-    }
-
     const usuario = await this.userRepository.findOne({ where: { id: dto.usuarioId } });
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${dto.usuarioId} no encontrado`);
@@ -561,6 +562,10 @@ export class AppointmentsService {
       : null;
     if (dto.estilistaId && !estilista) {
       throw new NotFoundException(`Estilista con ID ${dto.estilistaId} no encontrado`);
+    }
+
+    if (negocio && estilista && estilista.negocio?.id !== negocio.id) {
+      throw new BadRequestException('El estilista seleccionado no pertenece al negocio indicado.');
     }
 
     if (negocio && servicio.negocio.id !== negocio.id) {
