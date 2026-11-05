@@ -29,8 +29,8 @@ export class BusinessStateService {
         : BusinessStatus.EN_CONFIGURACION;
 
     if (business.estado !== estado) {
+      await this.businessRepository.update(business.id, { estado });
       business.estado = estado;
-      return this.businessRepository.save(business);
     }
 
     return business;

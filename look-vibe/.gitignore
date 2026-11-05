@@ -20,6 +20,10 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 /postman/
+/sql/
+*.postman_collection.json
+*.postman_environment.json
+*.postman_test_run.json
 
 # IDEs and editors
 /.idea

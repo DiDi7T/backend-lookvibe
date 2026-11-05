@@ -21,7 +21,6 @@ export class UserRoleGuard implements CanActivate {
         if (validRoles.includes(role))
         return true
     }
-    console.log(validRoles);
     throw new ForbiddenException("user doesn't have required role"); 
     }
 }
