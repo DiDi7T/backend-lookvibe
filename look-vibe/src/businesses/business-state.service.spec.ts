@@ -11,7 +11,7 @@ describe('BusinessStateService', () => {
       longitud: -76.532,
       estado: BusinessStatus.EN_CONFIGURACION,
     } as Business;
-    const businessRepository = { save: vi.fn().mockResolvedValue({ ...business, estado: BusinessStatus.ACTIVO }) };
+    const businessRepository = { update: vi.fn().mockResolvedValue({ affected: 1 }) };
     const serviceRepository = { count: vi.fn().mockResolvedValue(1) };
     const stylistRepository = { count: vi.fn().mockResolvedValue(1) };
     const service = new BusinessStateService(
@@ -23,9 +23,7 @@ describe('BusinessStateService', () => {
     const result = await service.refresh(business);
 
     expect(result.estado).toBe(BusinessStatus.ACTIVO);
-    expect(businessRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ estado: BusinessStatus.ACTIVO }),
-    );
+    expect(businessRepository.update).toHaveBeenCalledWith(business.id, { estado: BusinessStatus.ACTIVO });
   });
 
   it('mantiene el negocio en configuración cuando aún no tiene estilistas', async () => {
@@ -35,7 +33,7 @@ describe('BusinessStateService', () => {
       longitud: -76.532,
       estado: BusinessStatus.EN_CONFIGURACION,
     } as Business;
-    const businessRepository = { save: vi.fn() };
+    const businessRepository = { update: vi.fn() };
     const serviceRepository = { count: vi.fn().mockResolvedValue(1) };
     const stylistRepository = { count: vi.fn().mockResolvedValue(0) };
     const service = new BusinessStateService(
@@ -47,6 +45,6 @@ describe('BusinessStateService', () => {
     const result = await service.refresh(business);
 
     expect(result.estado).toBe(BusinessStatus.EN_CONFIGURACION);
-    expect(businessRepository.save).not.toHaveBeenCalled();
+    expect(businessRepository.update).not.toHaveBeenCalled();
   });
 });
