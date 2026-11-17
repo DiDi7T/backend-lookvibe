@@ -87,6 +87,10 @@ describe('AppointmentsService', () => {
     expect(appointmentRepository.save).toHaveBeenCalled();
     expect(result.estado).toBe('pendiente');
     expect(result.negocio?.id).toBe('business-1');
+    expect(result.precioBase).toBe(120000);
+    expect(result.descuentoBienvenida).toBe(12000);
+    expect(result.beneficioBienvenidaAplicado).toBe(true);
+    expect(result.precioTotal).toBe(108000);
   });
 
   it('should reject an appointment without business or stylist', async () => {
@@ -114,6 +118,33 @@ describe('AppointmentsService', () => {
     expect(result.businessId).toBe('business-1');
     expect(Array.isArray(result.slots)).toBe(true);
     expect(result.ocupadas).toBe(6);
+  });
+
+  it('limits legacy business schedules to 07:00 through 21:00 in the schedule timezone', async () => {
+    businessRepository.findOne.mockResolvedValue({ id: 'business-1' });
+    scheduleRepository.find.mockResolvedValue([
+      { tipoRecurso: 'negocio', recursoId: 'business-1', diaSemana: 6, horaInicio: '03:00', horaFin: '23:00', zonaHoraria: 'UTC' },
+    ]);
+    appointmentRepository.find.mockResolvedValue([]);
+
+    const result = await service.getBusinessAvailability('business-1', '2026-10-10');
+
+    expect(result.zonaHoraria).toBe('UTC');
+    expect(result.slots[0].inicio).toBe('2026-10-10T07:00:00.000Z');
+    expect(result.slots.at(-1)?.fin).toBe('2026-10-10T21:00:00.000Z');
+  });
+
+  it('rejects business schedules that start before 07:00 or end after 21:00', async () => {
+    businessRepository.findOne.mockResolvedValue({ id: 'business-1', owner: { id: 'owner-1' } });
+    const actor = { id: 'owner-1', roles: [AppRoles.negocio] } as User;
+
+    await expect(service.setBusinessSchedule('business-1', actor, {
+      horarios: [{ diaSemana: 1, horaInicio: '06:59', horaFin: '20:00' }],
+    })).rejects.toThrow(BadRequestException);
+    await expect(service.setBusinessSchedule('business-1', actor, {
+      horarios: [{ diaSemana: 1, horaInicio: '07:00', horaFin: '21:01' }],
+    })).rejects.toThrow(BadRequestException);
+    expect(dataSource.transaction).not.toHaveBeenCalled();
   });
 
   it('scopes appointment lists to the authenticated client', async () => {

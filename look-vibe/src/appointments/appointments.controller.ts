@@ -75,13 +75,13 @@ export class AppointmentsController {
   }
 
   @Put(':id')
-  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
+  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
   update(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Body() updateAppointmentDto: UpdateAppointmentDto) {
     return this.appointmentsService.update(id, updateAppointmentDto, user).then(toAppointmentResponse);
   }
 
   @Patch(':id')
-  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
+  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
   patch(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Body() updateAppointmentDto: UpdateAppointmentDto) {
     return this.appointmentsService.update(id, updateAppointmentDto, user).then(toAppointmentResponse);
   }
@@ -93,7 +93,7 @@ export class AppointmentsController {
   }
 
   @Delete(':id')
-  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
+  @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
   remove(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Query('motivo') motivo?: string) {
     return this.appointmentsService.remove(id, motivo, user);
   }

@@ -11,6 +11,9 @@ import { CreateAppointmentDto } from './dto/create-appointment.dto.js';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto.js';
 import { Appointment } from './entities/appointment.entity.js';
 import { AppointmentSchedule } from './entities/appointment-schedule.entity.js';
+
+const EARLIEST_BUSINESS_MINUTE = 7 * 60;
+const LATEST_BUSINESS_MINUTE = 21 * 60;
 import { SetScheduleDto } from './dto/set-schedule.dto.js';
 
 @Injectable()
@@ -135,12 +138,27 @@ export class AppointmentsService {
       });
       if (!appointment) throw new NotFoundException(`Cita con ID ${id} no encontrada`);
 
+      const isStylistOnlyActor = actor.roles.includes(AppRoles.estilista)
+        && !actor.roles.some((role) => [AppRoles.cliente, AppRoles.negocio, AppRoles.admin].includes(role));
+      const rescheduling = Boolean(dto.negocioId || dto.estilistaId || dto.servicioId || dto.fechaHora);
+      if (isStylistOnlyActor && (
+        !rescheduling || dto.negocioId || dto.estilistaId || dto.servicioId
+        || dto.nota !== undefined || dto.motivoCancelacion !== undefined
+      )) {
+        throw new ForbiddenException('El estilista solo puede reprogramar la fecha y hora de su cita.');
+      }
+      if (isStylistOnlyActor && (
+        appointment.estilista?.estadoAfiliacion !== 'INDEPENDIENTE'
+        || appointment.estilista.negocio != null
+      )) {
+        throw new ForbiddenException('Solo un estilista independiente puede reprogramar esta cita.');
+      }
+
       const fechaHora = dto.fechaHora ? new Date(dto.fechaHora) : appointment.fechaHora;
       if (dto.fechaHora && Number.isNaN(fechaHora.getTime())) {
         throw new BadRequestException('La nueva fecha y hora no es válida.');
       }
 
-      const rescheduling = Boolean(dto.negocioId || dto.estilistaId || dto.servicioId || dto.fechaHora);
       if (rescheduling) {
         const stylistId = dto.estilistaId ?? (dto.negocioId ? undefined : appointment.estilista?.id);
         const businessId = dto.negocioId ?? (dto.estilistaId
@@ -317,6 +335,11 @@ export class AppointmentsService {
 
     const intervalsByDay = new Map<number, Array<{ horaInicio: string; horaFin: string }>>();
     for (const interval of dto.horarios) {
+      const openingMinute = this.timeToMinutes(interval.horaInicio);
+      const closingMinute = this.timeToMinutes(interval.horaFin);
+      if (openingMinute < EARLIEST_BUSINESS_MINUTE || closingMinute > LATEST_BUSINESS_MINUTE) {
+        throw new BadRequestException('Los horarios solo pueden estar entre las 07:00 y las 21:00');
+      }
       if (interval.horaInicio >= interval.horaFin) {
         throw new BadRequestException('Cada intervalo debe terminar después de iniciar y dentro del mismo día');
       }
@@ -380,11 +403,22 @@ export class AppointmentsService {
     const dayOfWeek = new Date(`${date}T00:00:00.000Z`).getUTCDay();
     const repository = manager?.getRepository(AppointmentSchedule) ?? this.scheduleRepository;
     const schedules = await repository.find({ where: { tipoRecurso, recursoId, diaSemana: dayOfWeek } });
-    return schedules.map((schedule) => ({
-      inicio: this.localTimeToUtc(date, schedule.horaInicio, schedule.zonaHoraria),
-      fin: this.localTimeToUtc(date, schedule.horaFin, schedule.zonaHoraria),
-      zonaHoraria: schedule.zonaHoraria,
-    }));
+    return schedules.map((schedule) => {
+      const scheduledStart = this.localTimeToUtc(date, schedule.horaInicio, schedule.zonaHoraria);
+      const scheduledEnd = this.localTimeToUtc(date, schedule.horaFin, schedule.zonaHoraria);
+      const earliestStart = this.localTimeToUtc(date, '07:00', schedule.zonaHoraria);
+      const latestEnd = this.localTimeToUtc(date, '21:00', schedule.zonaHoraria);
+      return {
+        inicio: new Date(Math.max(scheduledStart.getTime(), earliestStart.getTime())),
+        fin: new Date(Math.min(scheduledEnd.getTime(), latestEnd.getTime())),
+        zonaHoraria: schedule.zonaHoraria,
+      };
+    }).filter((window) => window.inicio < window.fin);
+  }
+
+  private timeToMinutes(time: string): number {
+    const [hour, minute] = time.slice(0, 5).split(':').map(Number);
+    return hour * 60 + minute;
   }
 
   private async fitsSchedule(
