@@ -39,6 +39,32 @@ describe('Appointments HTTP integration', () => {
     setBusinessSchedule: vi.fn(),
     setStylistSchedule: vi.fn(),
   };
+  const appointmentEntity = () => {
+    const date = new Date('2026-10-10T10:00:00.000Z');
+    return {
+      id: APPOINTMENT_ID,
+      usuario: {
+        id: CLIENT_ID,
+        nombre: 'Cliente Prueba',
+        email: 'cliente@example.com',
+        roles: [AppRoles.cliente],
+        passwordHash: 'must-not-leak',
+      },
+      negocio: { id: BUSINESS_ID, nombre: 'Negocio Prueba', direccion: 'Cali' },
+      estilista: null,
+      servicio: { id: SERVICE_ID, nombre: 'Corte', precio: 50000, duracionMin: 45 },
+      fechaHora: date,
+      duracionMin: 45,
+      precioBase: 50000,
+      descuentoBienvenida: 0,
+      beneficioBienvenidaAplicado: false,
+      precioTotal: 50000,
+      estado: 'pendiente',
+      nota: null,
+      createdAt: date,
+      updatedAt: date,
+    };
+  };
   const token = (userId: string) => jwt.sign({ user_id: userId });
 
   beforeAll(async () => {
@@ -64,12 +90,12 @@ describe('Appointments HTTP integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    appointments.create.mockImplementation(async (dto) => ({ id: APPOINTMENT_ID, ...dto }));
-    appointments.findAll.mockResolvedValue([{ id: APPOINTMENT_ID, estado: 'pendiente' }]);
-    appointments.findOne.mockResolvedValue({ id: APPOINTMENT_ID, estado: 'pendiente' });
-    appointments.update.mockResolvedValue({ id: APPOINTMENT_ID, nota: 'Actualizada' });
+    appointments.create.mockResolvedValue(appointmentEntity());
+    appointments.findAll.mockResolvedValue([appointmentEntity()]);
+    appointments.findOne.mockResolvedValue(appointmentEntity());
+    appointments.update.mockResolvedValue(appointmentEntity());
     appointments.remove.mockResolvedValue({ id: APPOINTMENT_ID, message: 'Cita cancelada exitosamente' });
-    appointments.markCompleted.mockResolvedValue({ id: APPOINTMENT_ID, estado: 'completada' });
+    appointments.markCompleted.mockResolvedValue({ ...appointmentEntity(), estado: 'completada' });
     appointments.getBusinessAvailability.mockResolvedValue({ businessId: BUSINESS_ID, slots: [] });
     appointments.getStylistAvailability.mockResolvedValue({ stylistId: STYLIST_ID, slots: [] });
     appointments.setBusinessSchedule.mockResolvedValue({ tipoRecurso: 'negocio', recursoId: BUSINESS_ID });
@@ -84,7 +110,14 @@ describe('Appointments HTTP integration', () => {
       .get('/citas')
       .set('Authorization', `Bearer ${token(CLIENT_ID)}`)
       .expect(200)
-      .expect([{ id: APPOINTMENT_ID, estado: 'pendiente' }]);
+      .expect(({ body }) => {
+        expect(body[0]).toMatchObject({
+          id: APPOINTMENT_ID,
+          usuario: { id: CLIENT_ID, nombre: 'Cliente Prueba' },
+        });
+        expect(body[0].usuario).not.toHaveProperty('passwordHash');
+      });
+    expect(appointments.findAll).toHaveBeenCalledWith(users.get(CLIENT_ID));
   });
 
   it('valida y crea una cita, y rechaza roles no autorizados', async () => {
@@ -108,9 +141,24 @@ describe('Appointments HTTP integration', () => {
       .set('Authorization', auth)
       .send(payload)
       .expect(201)
-      .expect(({ body }) => expect(body).toMatchObject({ id: APPOINTMENT_ID, ...payload }));
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: APPOINTMENT_ID,
+          usuario: { id: CLIENT_ID },
+          negocio: { id: BUSINESS_ID },
+          servicio: { id: SERVICE_ID },
+        });
+        expect(body.usuario).not.toHaveProperty('passwordHash');
+      });
 
     expect(appointments.create).toHaveBeenCalledWith(expect.objectContaining(payload));
+
+    await request(app.getHttpServer())
+      .post('/citas')
+      .set('Authorization', auth)
+      .send({ ...payload, usuarioId: BUSINESS_ID })
+      .expect(201);
+    expect(appointments.create).toHaveBeenLastCalledWith(expect.objectContaining({ usuarioId: CLIENT_ID }));
   });
 
   it('consulta disponibilidad para negocio y estilista', async () => {
@@ -160,8 +208,8 @@ describe('Appointments HTTP integration', () => {
     await request(app.getHttpServer()).get(`/citas/${APPOINTMENT_ID}`).set('Authorization', auth).expect(200);
     await request(app.getHttpServer()).patch(`/citas/${APPOINTMENT_ID}`).set('Authorization', auth).send({ nota: 'Actualizada' }).expect(200);
     await request(app.getHttpServer()).delete(`/citas/${APPOINTMENT_ID}?motivo=No%20puedo`).set('Authorization', auth).expect(200);
-    expect(appointments.update).toHaveBeenCalledWith(APPOINTMENT_ID, { nota: 'Actualizada' });
-    expect(appointments.remove).toHaveBeenCalledWith(APPOINTMENT_ID, 'No puedo');
+    expect(appointments.update).toHaveBeenCalledWith(APPOINTMENT_ID, { nota: 'Actualizada' }, users.get(CLIENT_ID));
+    expect(appointments.remove).toHaveBeenCalledWith(APPOINTMENT_ID, 'No puedo', users.get(CLIENT_ID));
   });
 
   it('permite completar a estilista y negocio, no a cliente', async () => {
@@ -175,6 +223,6 @@ describe('Appointments HTTP integration', () => {
       .set('Authorization', `Bearer ${token(CLIENT_ID)}`)
       .send({ completada: true })
       .expect(403);
-    expect(appointments.markCompleted).toHaveBeenCalledWith(APPOINTMENT_ID, true);
+    expect(appointments.markCompleted).toHaveBeenCalledWith(APPOINTMENT_ID, true, users.get(STYLIST_ID));
   });
 });

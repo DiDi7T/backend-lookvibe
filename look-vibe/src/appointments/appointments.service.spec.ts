@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { vi } from 'vitest';
@@ -7,6 +7,7 @@ import { Business } from '../businesses/entities/business.entity.js';
 import { Service } from '../services/entities/service.entity.js';
 import { Stylist } from '../stylists/entities/stylist.entity.js';
 import { User } from '../users/entities/user.entity.js';
+import { AppRoles } from '../auth/interfaces/app-roles.js';
 import { AppointmentsService } from './appointments.service.js';
 import { Appointment } from './entities/appointment.entity.js';
 import { AppointmentSchedule } from './entities/appointment-schedule.entity.js';
@@ -113,5 +114,52 @@ describe('AppointmentsService', () => {
     expect(result.businessId).toBe('business-1');
     expect(Array.isArray(result.slots)).toBe(true);
     expect(result.ocupadas).toBe(6);
+  });
+
+  it('scopes appointment lists to the authenticated client', async () => {
+    appointmentRepository.find.mockResolvedValue([]);
+
+    await service.findAll({ id: 'client-1', roles: [AppRoles.cliente] } as User);
+
+    expect(appointmentRepository.find).toHaveBeenCalledWith(expect.objectContaining({
+      where: [{ usuario: { id: 'client-1' } }],
+    }));
+  });
+
+  it('scopes appointment lists to the business owner and stylist', async () => {
+    appointmentRepository.find.mockResolvedValue([]);
+
+    await service.findAll({ id: 'owner-1', roles: [AppRoles.negocio] } as User);
+    expect(appointmentRepository.find).toHaveBeenCalledWith(expect.objectContaining({
+      where: [
+        { negocio: { owner: { id: 'owner-1' } } },
+        { estilista: { negocio: { owner: { id: 'owner-1' } } } },
+      ],
+    }));
+
+    appointmentRepository.find.mockClear();
+    await service.findAll({ id: 'stylist-user-1', roles: [AppRoles.estilista] } as User);
+    expect(appointmentRepository.find).toHaveBeenCalledWith(expect.objectContaining({
+      where: [{ estilista: { usuario: { id: 'stylist-user-1' } } }],
+    }));
+  });
+
+  it('allows admins to list all appointments', async () => {
+    appointmentRepository.find.mockResolvedValue([]);
+
+    await service.findAll({ id: 'admin-1', roles: [AppRoles.admin] } as User);
+
+    expect(appointmentRepository.find).toHaveBeenCalledWith(expect.not.objectContaining({ where: expect.anything() }));
+  });
+
+  it('returns not found when an appointment is outside the actor scope', async () => {
+    appointmentRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.findOne('appointment-1', { id: 'client-1', roles: [AppRoles.cliente] } as User),
+    ).rejects.toThrow(NotFoundException);
+    expect(appointmentRepository.findOne).toHaveBeenCalledWith(expect.objectContaining({
+      where: [{ id: 'appointment-1', usuario: { id: 'client-1' } }],
+    }));
   });
 });

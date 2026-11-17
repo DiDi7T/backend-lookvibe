@@ -260,33 +260,50 @@ describe('AppointmentsService', () => {
 
   it('lists appointments and finds one by id', async () => {
     const appointments = [storedAppointment()];
+    const actor = { id: 'user-1', roles: [AppRoles.cliente] } as User;
     appointmentRepository.find.mockResolvedValue(appointments);
     appointmentRepository.findOne.mockResolvedValue(appointments[0]);
-    await expect(service.findAll()).resolves.toBe(appointments);
-    await expect(service.findOne('apt-1')).resolves.toBe(appointments[0]);
-    expect(appointmentRepository.findOne).toHaveBeenCalledWith(expect.objectContaining({ where: { id: 'apt-1' } }));
+    await expect(service.findAll(actor)).resolves.toBe(appointments);
+    await expect(service.findOne('apt-1', actor)).resolves.toBe(appointments[0]);
+    expect(appointmentRepository.findOne).toHaveBeenCalledWith(expect.objectContaining({
+      where: [{ id: 'apt-1', usuario: { id: 'user-1' } }],
+    }));
   });
 
   it('throws when an appointment does not exist', async () => {
     appointmentRepository.findOne.mockResolvedValue(null);
-    await expect(service.findOne('missing')).rejects.toThrow('Cita con ID missing no encontrada');
+    await expect(service.findOne('missing', { id: 'user-1', roles: [AppRoles.cliente] } as User))
+      .rejects.toThrow('Cita con ID missing no encontrada');
+  });
+
+  it('does not update an appointment outside the actor scope', async () => {
+    appointmentRepository.findOne.mockResolvedValue(null);
+
+    await expect(service.update(
+      'apt-1',
+      { nota: 'No autorizado' },
+      { id: 'other-user', roles: [AppRoles.cliente] } as User,
+    )).rejects.toThrow('Cita con ID apt-1 no encontrada');
+    expect(dataSource.transaction).not.toHaveBeenCalled();
   });
 
   it('updates notes and cancellation status', async () => {
     const appointment = storedAppointment();
     appointmentRepository.findOne.mockResolvedValue(appointment);
     appointmentRepository.save.mockImplementation((saved) => Promise.resolve(saved));
-    const result = await service.update('apt-1', { nota: 'Cambio de planes', motivoCancelacion: 'Solicitado' });
+    const actor = { id: 'user-1', roles: [AppRoles.cliente] } as User;
+    const result = await service.update('apt-1', { nota: 'Cambio de planes', motivoCancelacion: 'Solicitado' }, actor);
     expect(result).toMatchObject({ estado: 'cancelada', nota: 'Cambio de planes' });
   });
 
   it('rejects invalid update dates and updates service context', async () => {
     const appointment = storedAppointment();
     appointmentRepository.findOne.mockResolvedValue(appointment);
-    await expect(service.update('apt-1', { fechaHora: 'invalid-date' })).rejects.toThrow('La nueva fecha y hora no es válida.');
+    const actor = { id: 'user-1', roles: [AppRoles.cliente] } as User;
+    await expect(service.update('apt-1', { fechaHora: 'invalid-date' }, actor)).rejects.toThrow('La nueva fecha y hora no es válida.');
     mockBusinessContext();
     appointmentRepository.findOne.mockResolvedValue(appointment);
-    const updated = await service.update('apt-1', { servicioId: 'service-1' });
+    const updated = await service.update('apt-1', { servicioId: 'service-1' }, actor);
     expect(updated.servicio).toEqual(expect.objectContaining({ id: 'service-1' }));
   });
 
@@ -296,7 +313,7 @@ describe('AppointmentsService', () => {
     appointmentRepository.findOne.mockResolvedValue(appointment);
     appointmentRepository.find.mockResolvedValue([appointment]);
 
-    const updated = await service.update('apt-1', { fechaHora: '2026-10-10T11:00:00.000Z' });
+    const updated = await service.update('apt-1', { fechaHora: '2026-10-10T11:00:00.000Z' }, { id: 'user-1', roles: [AppRoles.cliente] } as User);
 
     expect(updated).toMatchObject({
       precioBase: 120000,
@@ -310,10 +327,11 @@ describe('AppointmentsService', () => {
     const appointment = storedAppointment();
     appointmentRepository.findOne.mockResolvedValue(appointment);
     appointmentRepository.save.mockImplementation((saved) => Promise.resolve(saved));
-    await expect(service.remove('apt-1', 'No puedo asistir')).resolves.toEqual({ message: 'Cita cancelada exitosamente', id: 'apt-1' });
+    const actor = { id: 'user-1', roles: [AppRoles.cliente] } as User;
+    await expect(service.remove('apt-1', 'No puedo asistir', actor)).resolves.toEqual({ message: 'Cita cancelada exitosamente', id: 'apt-1' });
     expect(appointment).toMatchObject({ estado: 'cancelada', nota: 'No puedo asistir' });
-    await expect(service.markCompleted('apt-1')).resolves.toMatchObject({ estado: 'completada' });
-    await expect(service.markCompleted('apt-1', false)).resolves.toMatchObject({ estado: 'no_realizada' });
+    await expect(service.markCompleted('apt-1', true, actor)).resolves.toMatchObject({ estado: 'completada' });
+    await expect(service.markCompleted('apt-1', false, actor)).resolves.toMatchObject({ estado: 'no_realizada' });
   });
 
   it('returns business and stylist availability and rejects missing profiles', async () => {

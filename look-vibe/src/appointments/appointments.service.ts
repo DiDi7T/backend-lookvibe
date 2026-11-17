@@ -81,8 +81,11 @@ export class AppointmentsService {
     });
   }
 
-  async findAll() {
+  async findAll(actor: User) {
+    const scope = this.getAppointmentScope(actor);
+    if (scope?.length === 0) return [];
     return this.appointmentRepository.find({
+      ...(scope ? { where: scope } : {}),
       relations: {
         usuario: true,
         negocio: true,
@@ -93,9 +96,14 @@ export class AppointmentsService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, actor: User) {
+    const scope = this.getAppointmentScope(actor);
+    if (scope?.length === 0) throw new NotFoundException(`Cita con ID ${id} no encontrada`);
+    const where: FindOptionsWhere<Appointment>[] = scope
+      ? scope.map((filter) => ({ id, ...filter }))
+      : [{ id }];
     const appointment = await this.appointmentRepository.findOne({
-      where: { id },
+      where,
       relations: {
         usuario: true,
         negocio: true,
@@ -111,7 +119,8 @@ export class AppointmentsService {
     return appointment;
   }
 
-  async update(id: string, dto: UpdateAppointmentDto) {
+  async update(id: string, dto: UpdateAppointmentDto, actor: User) {
+    await this.findOne(id, actor);
     return this.dataSource.transaction(async (manager) => {
       const appointmentRepository = manager.getRepository(Appointment);
       const lockedAppointment = await appointmentRepository.findOne({
@@ -191,8 +200,8 @@ export class AppointmentsService {
     });
   }
 
-  async remove(id: string, motivo?: string) {
-    const appointment = await this.findOne(id);
+  async remove(id: string, motivo: string | undefined, actor: User) {
+    const appointment = await this.findOne(id, actor);
     appointment.estado = 'cancelada';
     if (motivo) {
       appointment.nota = motivo;
@@ -202,10 +211,27 @@ export class AppointmentsService {
     return { message: 'Cita cancelada exitosamente', id: appointment.id };
   }
 
-  async markCompleted(id: string, completed = true) {
-    const appointment = await this.findOne(id);
+  async markCompleted(id: string, completed: boolean, actor: User) {
+    const appointment = await this.findOne(id, actor);
     appointment.estado = completed ? 'completada' : 'no_realizada';
     return this.appointmentRepository.save(appointment);
+  }
+
+  private getAppointmentScope(actor: User): FindOptionsWhere<Appointment>[] | null {
+    if (actor.roles.includes(AppRoles.admin)) return null;
+
+    const scope: FindOptionsWhere<Appointment>[] = [];
+    if (actor.roles.includes(AppRoles.cliente)) {
+      scope.push({ usuario: { id: actor.id } });
+    }
+    if (actor.roles.includes(AppRoles.negocio)) {
+      scope.push({ negocio: { owner: { id: actor.id } } });
+      scope.push({ estilista: { negocio: { owner: { id: actor.id } } } });
+    }
+    if (actor.roles.includes(AppRoles.estilista)) {
+      scope.push({ estilista: { usuario: { id: actor.id } } });
+    }
+    return scope;
   }
 
   async setBusinessSchedule(businessId: string, actor: User, dto: SetScheduleDto) {

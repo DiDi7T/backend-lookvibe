@@ -8,8 +8,7 @@ export class User {
     nombre: string;
     @Column({ type: 'varchar', unique: true })
     email: string;
-    //Momentaniamente desactive el select false para debugear el login y pues no podia ver bien que estaba pasando
-    @Column({ type: 'varchar'})
+    @Column({ type: 'varchar', select: false })
     passwordHash: string;
 
     @Column('varchar', { array: true, default: [AppRoles.user] })

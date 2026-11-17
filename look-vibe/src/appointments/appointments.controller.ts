@@ -7,6 +7,7 @@ import { AppointmentsService } from './appointments.service.js';
 import { CreateAppointmentDto } from './dto/create-appointment.dto.js';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto.js';
 import { SetScheduleDto } from './dto/set-schedule.dto.js';
+import { toAppointmentResponse } from './dto/appointment-response.dto.js';
 
 @Controller(['citas', 'appointments'])
 export class AppointmentsController {
@@ -15,13 +16,16 @@ export class AppointmentsController {
   @Post()
   @Auth(AppRoles.cliente, AppRoles.admin)
   create(@UserDecorator() user: User, @Body() createAppointmentDto: CreateAppointmentDto) {
-    return this.appointmentsService.create({ ...createAppointmentDto, usuarioId: createAppointmentDto.usuarioId ?? user.id });
+    const dto = user.roles.includes(AppRoles.admin)
+      ? createAppointmentDto
+      : { ...createAppointmentDto, usuarioId: user.id };
+    return this.appointmentsService.create(dto).then(toAppointmentResponse);
   }
 
   @Get()
   @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
-  findAll() {
-    return this.appointmentsService.findAll();
+  findAll(@UserDecorator() user: User) {
+    return this.appointmentsService.findAll(user).then((appointments) => appointments.map(toAppointmentResponse));
   }
 
   @Get('negocios/:id/disponibilidad')
@@ -66,31 +70,31 @@ export class AppointmentsController {
 
   @Get(':id')
   @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.appointmentsService.findOne(id);
+  findOne(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User) {
+    return this.appointmentsService.findOne(id, user).then(toAppointmentResponse);
   }
 
   @Put(':id')
   @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
-    return this.appointmentsService.update(id, updateAppointmentDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Body() updateAppointmentDto: UpdateAppointmentDto) {
+    return this.appointmentsService.update(id, updateAppointmentDto, user).then(toAppointmentResponse);
   }
 
   @Patch(':id')
   @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
-  patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
-    return this.appointmentsService.update(id, updateAppointmentDto);
+  patch(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Body() updateAppointmentDto: UpdateAppointmentDto) {
+    return this.appointmentsService.update(id, updateAppointmentDto, user).then(toAppointmentResponse);
   }
 
   @Patch(':id/completada')
   @Auth(AppRoles.negocio, AppRoles.estilista, AppRoles.admin)
-  markCompleted(@Param('id', ParseUUIDPipe) id: string, @Body('completada') completada = true) {
-    return this.appointmentsService.markCompleted(id, completada);
+  markCompleted(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Body('completada') completada = true) {
+    return this.appointmentsService.markCompleted(id, completada, user).then(toAppointmentResponse);
   }
 
   @Delete(':id')
   @Auth(AppRoles.cliente, AppRoles.negocio, AppRoles.admin)
-  remove(@Param('id', ParseUUIDPipe) id: string, @Query('motivo') motivo?: string) {
-    return this.appointmentsService.remove(id, motivo);
+  remove(@Param('id', ParseUUIDPipe) id: string, @UserDecorator() user: User, @Query('motivo') motivo?: string) {
+    return this.appointmentsService.remove(id, motivo, user);
   }
 }
