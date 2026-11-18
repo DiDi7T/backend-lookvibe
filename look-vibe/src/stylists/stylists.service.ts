@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull,Repository } from 'typeorm';
 import { AppRoles } from '../auth/interfaces/app-roles.js';
 import { Appointment } from '../appointments/entities/appointment.entity.js';
 import { BusinessesService } from '../businesses/businesses.service.js';
@@ -9,6 +9,8 @@ import { User } from '../users/entities/user.entity.js';
 import { CreateStylistDto } from './dto/create-stylist.dto.js';
 import { UpdateStylistDto } from './dto/update-stylist.dto.js';
 import { Stylist } from './entities/stylist.entity.js';
+
+
 
 @Injectable()
 export class StylistsService {
@@ -145,6 +147,8 @@ export class StylistsService {
       await this.businessStateService.refresh(business);
     }
   }
+
+
 
   async solicitarAfiliacion(id: string, actor: User, businessId: string): Promise<Stylist> {
     const stylist = await this.findOne(id);
