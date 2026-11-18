@@ -48,6 +48,16 @@ export class StylistsController {
     return this.stylistsService.getAvailability(id, fecha, duracionMin, pasoMin);
   }
 
+@Get('explorar')
+  explore() {
+    return this.stylistsService.explore();
+  }
+
+  @Get('estilistas/independientes')
+  findIndependents() {
+    return this.stylistsService.findIndependents();
+  }
+
   @Get('estilistas/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.stylistsService.findOne(id);
