@@ -38,6 +38,11 @@ export class AppointmentsController {
     return this.appointmentsService.getBusinessAvailability(id, fecha, duracionMin, pasoMin);
   }
 
+  @Get('negocios/:id/horarios')
+  getBusinessSchedule(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.getBusinessSchedule(id);
+  }
+
   @Get('estilistas/:id/disponibilidad')
   getStylistAvailability(
     @Param('id', ParseUUIDPipe) id: string,

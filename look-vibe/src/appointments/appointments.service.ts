@@ -294,6 +294,27 @@ export class AppointmentsService {
     return { businessId, fecha: date, zonaHoraria: windows[0]?.zonaHoraria ?? 'America/Bogota', ocupadas: slots.filter((slot) => !slot.disponible).length, slots };
   }
 
+  async getBusinessSchedule(businessId: string) {
+    const business = await this.businessRepository.findOne({
+      where: { id: businessId, estado: BusinessStatus.ACTIVO },
+    });
+    if (!business) throw new NotFoundException(`Negocio con ID ${businessId} no encontrado`);
+
+    const schedules = await this.scheduleRepository.find({
+      where: { tipoRecurso: 'negocio', recursoId: businessId },
+      order: { diaSemana: 'ASC', horaInicio: 'ASC' },
+    });
+    return {
+      businessId,
+      zonaHoraria: schedules[0]?.zonaHoraria ?? 'America/Bogota',
+      horarios: schedules.map(({ diaSemana, horaInicio, horaFin }) => ({
+        diaSemana,
+        horaInicio: horaInicio.slice(0, 5),
+        horaFin: horaFin.slice(0, 5),
+      })),
+    };
+  }
+
   async getStylistAvailability(stylistId: string, fecha?: string, duracionMin?: string, pasoMin?: string) {
     const stylist = await this.stylistRepository.findOne({ where: { id: stylistId }, relations: { negocio: true } });
     if (!stylist) throw new NotFoundException(`Estilista con ID ${stylistId} no encontrado`);
