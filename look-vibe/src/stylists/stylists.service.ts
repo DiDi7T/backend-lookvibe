@@ -71,6 +71,22 @@ export class StylistsService {
     return stylist;
   }
 
+async findIndependents(): Promise<Stylist[]> {
+    return this.stylistRepository.find({
+      where: { negocio: IsNull() },
+      relations: { usuario: true },
+    });
+  }
+
+  async explore() {
+    const [negocios, estilistas] = await Promise.all([
+      this.businessesService.findNearby({}),
+      this.findIndependents(),
+    ]);
+    return { negocios, estilistas };
+  }
+
+
   async getAvailability(id: string, fecha?: string, duracionMin?: string, pasoMin?: string) {
     await this.findOne(id);
     const duration = this.parsePositiveMinutes(duracionMin, 60, 'duracionMin');
