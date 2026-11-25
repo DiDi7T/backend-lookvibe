@@ -1,0 +1,128 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Appointment {
+  beneficioBienvenidaAplicado: Boolean!
+  createdAt: String!
+  descuentoBienvenida: Float!
+  duracionMin: Int!
+  estado: String!
+  estilista: AppointmentStylist
+  fechaHora: String!
+  id: ID!
+  negocio: AppointmentBusiness
+  nota: String
+  precioBase: Float
+  precioTotal: Float
+  servicio: AppointmentService!
+  updatedAt: String!
+  usuario: AppointmentUser!
+}
+
+type AppointmentBusiness {
+  direccion: String
+  id: ID!
+  nombre: String!
+}
+
+type AppointmentService {
+  duracionMin: Int!
+  id: ID!
+  nombre: String!
+  precio: Float!
+}
+
+type AppointmentStylist {
+  especialidad: String!
+  estadoAfiliacion: String!
+  fotoUrl: String
+  id: ID!
+  negocio: AppointmentBusiness
+}
+
+type AppointmentUser {
+  email: String!
+  id: ID!
+  nombre: String!
+  roles: [String!]!
+}
+
+type Availability {
+  fecha: String!
+  ocupadas: Int!
+  slots: [TimeSlot!]!
+  zonaHoraria: String!
+}
+
+type BusinessSchedule {
+  businessId: ID!
+  horarios: [ScheduleInterval!]!
+  zonaHoraria: String!
+}
+
+input CreateAppointmentInput {
+  estilistaId: ID
+  fechaHora: String!
+  negocioId: ID
+  nota: String
+  servicioId: ID!
+  usuarioId: ID!
+}
+
+type Mutation {
+  cancelAppointment(id: ID!, motivo: String): Boolean!
+  completeAppointment(completed: Boolean! = true, id: ID!): Appointment!
+  createAppointment(input: CreateAppointmentInput!): Appointment!
+  setBusinessSchedule(businessId: ID!, input: SetScheduleInput!): ScheduleResult!
+  setStylistSchedule(input: SetScheduleInput!, stylistId: ID!): ScheduleResult!
+  updateAppointment(id: ID!, input: UpdateAppointmentInput!): Appointment!
+}
+
+type Query {
+  appointment(id: ID!): Appointment
+  appointments: [Appointment!]!
+  businessAvailability(businessId: ID!, duracionMin: Int, fecha: String, pasoMin: Int): Availability!
+  businessSchedule(businessId: ID!): BusinessSchedule!
+  stylistAvailability(duracionMin: Int, fecha: String, pasoMin: Int, stylistId: ID!): Availability!
+}
+
+type ScheduleInterval {
+  diaSemana: Int!
+  horaFin: String!
+  horaInicio: String!
+}
+
+input ScheduleIntervalInput {
+  diaSemana: Int!
+  horaFin: String!
+  horaInicio: String!
+}
+
+type ScheduleResult {
+  horarios: [ScheduleInterval!]!
+  recursoId: ID!
+  tipoRecurso: String!
+  zonaHoraria: String!
+}
+
+input SetScheduleInput {
+  horarios: [ScheduleIntervalInput!]!
+  zonaHoraria: String
+}
+
+type TimeSlot {
+  disponible: Boolean!
+  fin: String!
+  inicio: String!
+}
+
+input UpdateAppointmentInput {
+  estilistaId: ID
+  fechaHora: String
+  motivoCancelacion: String
+  negocioId: ID
+  nota: String
+  servicioId: ID
+  usuarioId: ID
+}

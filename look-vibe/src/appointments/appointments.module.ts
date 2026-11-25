@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../auth/auth.module.js';
+import { UserRoleGuard } from '../auth/guards/user-role/user-role.guard.js';
 import { Business } from '../businesses/entities/business.entity.js';
 import { Service } from '../services/entities/service.entity.js';
 import { Stylist } from '../stylists/entities/stylist.entity.js';
@@ -9,11 +11,12 @@ import { AppointmentsService } from './appointments.service.js';
 import { AppointmentsController } from './appointments.controller.js';
 import { Appointment } from './entities/appointment.entity.js';
 import { AppointmentSchedule } from './entities/appointment-schedule.entity.js';
+import { AppointmentsResolver } from './graphql/appointments.resolver.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Appointment, AppointmentSchedule, Business, Stylist, Service, User])],
+  imports: [AuthModule, TypeOrmModule.forFeature([Appointment, AppointmentSchedule, Business, Stylist, Service, User])],
   controllers: [AppointmentsController],
-  providers: [AppointmentsService],
+  providers: [AppointmentsService, AppointmentsResolver, UserRoleGuard],
   exports: [AppointmentsService, TypeOrmModule],
 })
 export class AppointmentsModule {}

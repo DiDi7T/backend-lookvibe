@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { createObserveModule } from '@nestjs/observe';
+import { join } from 'node:path';
+import type { Request, Response } from 'express';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthModule } from './auth/auth.module.js';
@@ -22,6 +27,14 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
   imports: [
     // 1. Carga global del archivo .env como en la base local de la clase
     ConfigModule.forRoot({ isGlobal: true }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      graphiql: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      context: ({ req, res }: { req: Request; res: Response }) => ({ req, res }),
+    }),
     // 2. Conexión a Supabase con SSL habilitado y puerto parseado a número
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

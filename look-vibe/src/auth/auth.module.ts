@@ -9,11 +9,12 @@ import { AuthController } from './auth.controller.js';
 import { RevokedToken } from './entities/revoked-token.entity.js';
 import { User } from '../users/entities/user.entity.js'; 
 import { UsersModule } from '../users/users.module.js'; 
+import { GqlJwtAuthGuard } from './guards/gql-jwt-auth.guard.js';
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, GqlJwtAuthGuard],
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([User, RevokedToken]), 
@@ -32,6 +33,6 @@ import { UsersModule } from '../users/users.module.js';
       },
     }),
   ],
-  exports: [JwtStrategy, PassportModule, JwtModule],
+  exports: [JwtStrategy, PassportModule, JwtModule, GqlJwtAuthGuard],
 })
 export class AuthModule {}

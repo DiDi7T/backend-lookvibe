@@ -1,2 +1,4 @@
 allowBuilds:
+  '@apollo/protobufjs': false
+  '@scarf/scarf': false
   bcrypt: false
